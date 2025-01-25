@@ -1,24 +1,32 @@
 export default async function router(pathname = window.location.pathname) {
-  switch (pathname) {
-    case "/":
+  const urlParams = new URLSearchParams(window.location.search);
+  const postId = urlParams.get("postId");
+
+  switch (true) {
+    case pathname === "/":
       await import("./views/welcome.js").then((module) => module.default());
       break;
-    case "/feed/":
+    case pathname === "/feed/":
       await import("./views/home.js").then((module) => module.default());
       break;
-    case "/auth/login/":
+    case pathname === "/auth/login/":
       await import("./views/login.js").then((module) => module.default());
       break;
-    case "/auth/register/":
+    case pathname === "/auth/register/":
       await import("./views/register.js").then((module) => module.default());
       break;
-    case "/post/":
-      await import("./views/post.js").then((module) => module.default());
+    case pathname === "/post/": {
+      if (postId) {
+        await import("./views/post.js").then((module) => module.default(postId));
+      } else {
+        console.error("No postId found in URL");
+      }
       break;
-    case "/profile/":
+    }
+    case pathname === "/profile/":
       await import("./views/profile.js").then((module) => module.default());
       break;
-    case "/profileEdit/":
+    case pathname === "/profileEdit/":
       await import("./views/profileEdit.js").then((module) => module.default());
       break;
     default:

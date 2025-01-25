@@ -1,11 +1,18 @@
 import { fetchAllPosts } from "../../api/post/read.js";
 import { renderPosts } from "../../ui/post/renderPosts.js";
+import { handlePostForm } from "../../ui/post/create.js";
 
 export default async function homeView() {
   try {
-    const posts = await fetchAllPosts();
+    const postForm = document.querySelector("#postForm");
+    if (!postForm) {
+      console.error("Post form not found!");
+    } else {
+      postForm.addEventListener("submit", handlePostForm);
+    }
 
-    renderPosts(posts);
+    const posts = await fetchAllPosts();
+    renderPosts(posts, true);
   } catch (error) {
     console.error("Failed to load posts:", error);
     const container = document.getElementById("postsContainer");
