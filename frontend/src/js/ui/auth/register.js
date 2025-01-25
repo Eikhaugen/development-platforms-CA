@@ -33,7 +33,6 @@ export async function handleRegisterForm(event) {
       bio: bio || "",
     });
 
-    console.log("User registered successfully:", result);
     alert("Registration successful!");
     window.location.href = "../login/";
   } catch (error) {
