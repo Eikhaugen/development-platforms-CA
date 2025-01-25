@@ -1,1 +1,1 @@
-export const API_BASE_URL = "https://development-platforms-ca.onrender.com";
+export const BASE_API_URL = "localhost:5500/";
