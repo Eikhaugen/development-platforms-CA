@@ -21,5 +21,3 @@ export async function registerUser({ uid, username, profilePicture, bio }) {
     throw error;
   }
 }
-
-

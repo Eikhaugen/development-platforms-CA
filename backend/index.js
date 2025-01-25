@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const admin = require('firebase-admin');
 require('dotenv').config();
 
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
 const serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
@@ -14,7 +16,12 @@ const db = admin.firestore();
 const app = express();
 
 // Middleware
-app.use(cors()); 
+app.use(cors({
+  origin: corsOrigin, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
+
 app.use(bodyParser.json()); 
 
 // Routes
@@ -23,22 +30,28 @@ app.get('/', (req, res) => {
 });
 
 app.post('/users', async (req, res) => {
-    try {
-      const { uid, username, profilePicture, profileBanner, bio } = req.body;
-      const userDoc = {
-        username,
-        profilePicture: profilePicture || null,
-        profileBanner: profileBanner || null,
-        bio: bio || "",
-        createdAt: new Date().toISOString()
-      };
-  
-      await db.collection('users').doc(uid).set(userDoc);
-      res.status(201).send({ message: 'User created successfully' });
-    } catch (error) {
-      res.status(500).send(error.message);
+  try {
+    const { uid, username, profilePicture, profileBanner, bio } = req.body;
+
+    if (!uid || !username) {
+      return res.status(400).send({ message: 'UID and username are required' });
     }
-  });
+
+    const userDoc = {
+      username,
+      profilePicture: profilePicture || null,
+      profileBanner: profileBanner || null,
+      bio: bio || "",
+      createdAt: new Date().toISOString(),
+    };
+
+    await db.collection('users').doc(uid).set(userDoc);
+    res.status(201).send({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+});
 
 app.get('/users', async (req, res) => {
   try {
