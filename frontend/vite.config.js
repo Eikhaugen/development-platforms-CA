@@ -10,7 +10,6 @@ export default defineConfig({
         feed: './feed/index.html',
         profile: './profile/index.html',
         post: './post/index.html',
-        postEdit: './post/edit/index.html',
         authLogin: './auth/login/index.html',
         authRegister: './auth/register/index.html',
       },
