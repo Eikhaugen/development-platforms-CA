@@ -1,6 +1,12 @@
 import { handleRegisterForm } from "../../ui/auth/register.js";
 
-const registerForm = document.querySelector("#sign-up-form");
+export default function registerView() {
+  const registerForm = document.querySelector("#sign-up-form");
 
-registerForm.addEventListener("submit", handleRegisterForm);
+  if (!registerForm) {
+    console.error("Register form not found!");
+    return;
+  }
 
+  registerForm.addEventListener("submit", handleRegisterForm);
+}

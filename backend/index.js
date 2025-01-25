@@ -126,7 +126,10 @@ app.post('/posts', async (req, res) => {
   
   app.get('/posts', async (req, res) => {
     try {
-      const postsSnapshot = await db.collection('posts').get();
+      const postsSnapshot = await db.collection('posts')
+        .orderBy('createdAt', 'desc')
+        .get();
+  
       const posts = [];
   
       for (const doc of postsSnapshot.docs) {
@@ -147,6 +150,7 @@ app.post('/posts', async (req, res) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
+  
   
   
   app.post('/posts/:postId/comments', async (req, res) => {
