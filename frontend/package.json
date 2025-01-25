@@ -1,0 +1,25 @@
+{
+  "name": "development-platforms-ca-frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Thomas Eikhaugen",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "browser-image-compression": "^2.0.2",
+    "firebase": "^11.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.10"
+  }
+}
