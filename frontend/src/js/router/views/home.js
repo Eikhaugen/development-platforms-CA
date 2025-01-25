@@ -1,5 +1,5 @@
 import { fetchAllPosts } from "../../api/post/read.js";
-import { renderPosts } from "../../ui/post/renderPosts.js";
+import { renderPosts } from "../../ui/post/render.js";
 import { handlePostForm } from "../../ui/post/create.js";
 
 export default async function homeView() {

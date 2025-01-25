@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../index.js" type="module"></script>
+    <script src="https://kit.fontawesome.com/6747f39511.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <ul>
+        <li><a href="../feed/">Home</a></li>
+        <li><a href="#">My Profile</a></li>
+    </ul>
+
+        <div id="profileSection">
+            <img src="" alt="Banner">
+            <div>
+                <img src="" alt="Profile Avatar">
+                <div>
+                    <div>
+                        <span>Username</span>
+                        <button>Edit Profile BTN</button>
+                    </div>
+                    <p>
+                        bio
+                    </p>
+                    <div>
+                        <span>Join date</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div id="editProfileContainer" class="hidden">
+        <form id="editProfileForm">
+            <label for="bio">Bio:</label>
+            <textarea id="bio" name="bio" rows="4" cols="50"></textarea>
+            <label for="avatar">Avatar:</label>
+            <input type="file" id="avatar" name="avatar" accept="image/*">
+            <label for="banner">Banner Image:</label>
+            <input type="file" id="banner" name="banner" accept="image/*">
+            <button type="submit">Save</button>
+        </form>
+    </div>
+    <div id="createPost">
+        <form id="postForm">
+            <textarea name="postContent" id="postContent" placeholder="What's on your mind?"></textarea>
+            <input type="file" id="postImage" accept="image/*">
+            <div>
+                <button type="submit">Post</button>
+            </div>
+        </form>
+    </div>
+    <div id="postContainer">
+
+    </div>
+
+</body>
+
+</html>

@@ -64,47 +64,71 @@ app.get('/users', async (req, res) => {
   }
 });
 
-app.put('/users/:uid', async (req, res) => {
-    try {
-      const { uid } = req.params;
-      const idToken = req.headers.authorization?.split(' ')[1];
-  
-      if (!idToken) {
-        return res.status(401).send({ message: 'Authorization token is required' });
-      }
+app.get('/users/:uid', async (req, res) => {
+  try {
+    const { uid } = req.params;
 
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
-  
-      if (decodedToken.uid !== uid) {
-        return res.status(403).send({ message: 'You are not authorized to update this profile' });
-      }
-  
-      const { username, profilePicture, bio } = req.body;
-  
-      if (!username && !profilePicture && !bio) {
-        return res.status(400).send({ message: 'At least one field (username, profilePicture, or bio) must be provided' });
-      }
-  
-      const updates = {};
-      if (username) updates.username = username;
-      if (profilePicture) updates.profilePicture = profilePicture;
-      if (bio) updates.bio = bio;
-  
-      await db.collection('users').doc(uid).update(updates);
-      res.status(200).send({ message: 'Profile updated successfully' });
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      if (error.code === 'auth/id-token-expired') {
-        return res.status(401).send({ message: 'Authorization token has expired' });
-      }
-      res.status(500).send({ message: 'Internal server error' });
+    const userDoc = await db.collection('users').doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  });
+
+    const userData = userDoc.data();
+
+    res.status(200).json({
+      username: userData.username || '',
+      bio: userData.bio || '',
+      avatar: userData.avatar || '',
+      banner: userData.banner || '',
+      createdAt: userData.createdAt || '',
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.put('/users/:uid', async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const idToken = req.headers.authorization?.split(' ')[1];
+
+    if (!idToken) {
+      return res.status(401).send({ message: 'Authorization token is required' });
+    }
+
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+    if (decodedToken.uid !== uid) {
+      return res.status(403).send({ message: 'You are not authorized to update this profile' });
+    }
+
+    const { bio, avatar, banner } = req.body;
+
+    if (!bio && !avatar && !banner) {
+      return res.status(400).send({ message: 'At least one field (bio, avatar, or banner) must be provided' });
+    }
+
+    const updates = {};
+    if (bio) updates.bio = bio;
+    if (avatar) updates.avatar = avatar;
+    if (banner) updates.banner = banner;
+
+    await db.collection('users').doc(uid).update(updates);
+    res.status(200).send({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+});
+
   
 
-app.post('/posts', async (req, res) => {
+  app.post('/posts', async (req, res) => {
     try {
-      const { userId, content } = req.body;
+      const { userId, content, image } = req.body;
   
       if (!userId || !content) {
         return res.status(400).send({ message: 'userId and content are required' });
@@ -113,6 +137,7 @@ app.post('/posts', async (req, res) => {
       const post = {
         userId,
         content,
+        image: image || null,
         createdAt: new Date().toISOString(),
       };
   
@@ -150,31 +175,58 @@ app.post('/posts', async (req, res) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
+
+  app.get('/posts/:postId', async (req, res) => {
+    const { postId } = req.params;
   
-  
-  
-  app.post('/posts/:postId/comments', async (req, res) => {
     try {
-      const { postId } = req.params;
-      const { userId, content } = req.body;
+      const postDoc = await db.collection('posts').doc(postId).get();
   
-      if (!userId || !content) {
-        return res.status(400).send({ message: 'userId and content are required' });
+      if (!postDoc.exists) {
+        return res.status(404).json({ message: 'Post not found' });
       }
   
-      const comment = {
-        userId,
-        content,
-        createdAt: new Date().toISOString(),
-      };
+      const postData = postDoc.data();
   
-      await db.collection('posts').doc(postId).collection('comments').add(comment);
-      res.status(201).send({ message: 'Comment added successfully' });
+      const userDoc = await db.collection('users').doc(postData.userId).get();
+      const username = userDoc.exists ? userDoc.data().username : 'Unknown User';
+  
+      res.status(200).json({
+        ...postData,
+        username,
+        id: postId,
+      });
     } catch (error) {
-      console.error('Error commenting on post:', error);
+      console.error('Error fetching post:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  app.get('/posts/:postId/comments', async (req, res) => {
+    try {
+      const { postId } = req.params;
+      const commentsSnapshot = await db.collection('posts').doc(postId).collection('comments').get();
+      const comments = [];
+  
+      for (const commentDoc of commentsSnapshot.docs) {
+        const commentData = commentDoc.data();
+        const userDoc = await db.collection('users').doc(commentData.userId).get();
+        const username = userDoc.exists ? userDoc.data().username : 'Unknown User';
+  
+        comments.push({
+          id: commentDoc.id,
+          ...commentData,
+          username,
+        });
+      }
+  
+      res.status(200).send(comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
       res.status(500).send({ message: 'Internal server error' });
     }
   });
+  
   
   app.get('/posts/:postId/comments', async (req, res) => {
     try {
