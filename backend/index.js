@@ -207,6 +207,31 @@ app.put('/users/:uid', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+  app.post('/posts/:postId/comments', async (req, res) => {
+    try {
+      const { postId } = req.params;
+      const { userId, content } = req.body;
+  
+      if (!userId || !content) {
+        return res.status(400).send({ message: 'userId and content are required' });
+      }
+  
+      const comment = {
+        userId,
+        content,
+        createdAt: new Date().toISOString(),
+      };
+  
+      await db.collection('posts').doc(postId).collection('comments').add(comment);
+  
+      res.status(201).send({ message: 'Comment added successfully' });
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  });
+  
   
   app.get('/posts/:postId/comments', async (req, res) => {
     try {
