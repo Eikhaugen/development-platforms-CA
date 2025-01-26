@@ -1,6 +1,7 @@
 import { fetchAllPosts } from "../../api/post/read.js";
 import { renderPosts } from "../../ui/post/render.js";
 import { handlePostForm } from "../../ui/post/create.js";
+import { toggleVisibility } from "../../ui/global/toggle.js";
 
 export default async function homeView() {
   try {
@@ -20,4 +21,11 @@ export default async function homeView() {
       container.innerHTML = "<p>Failed to load posts. Please try again later.</p>";
     }
   }
+
+    const menuToggle = document.querySelector("#menuToggleBTN");
+    if (menuToggle) {
+      menuToggle.addEventListener("click", (event) => {
+        toggleVisibility("#mobileNavList");
+      });
+    }
 }

@@ -3,6 +3,7 @@ import { renderSinglePost } from "../../ui/post/render.js";
 import { fetchCommentsByPostId } from "../../api/comments/read.js";
 import { renderComments } from "../../ui/comments/render.js";
 import { handleCommentForm } from "../../ui/comments/create.js";
+import { toggleVisibility } from "../../ui/global/toggle.js";
 
 export default async function postView(postId) {
   try {
@@ -28,5 +29,11 @@ export default async function postView(postId) {
     if (container) {
       container.innerHTML = "<p>Failed to load post. Please try again later.</p>";
     }
+  }
+  const menuToggle = document.querySelector("#menuToggleBTN");
+  if (menuToggle) {
+    menuToggle.addEventListener("click", (event) => {
+      toggleVisibility("#mobileNavList");
+    });
   }
 }

@@ -7,35 +7,65 @@
   <script src="../../index.js" type="module"></script>
   <script src="https://kit.fontawesome.com/6747f39511.js" crossorigin="anonymous"></script>
 </head>
-<body>
-    <div>
-        <h2>Register</h2>
-        <form id="sign-up-form">
-            <div>
-                <label for="sign-up-username">Username</label>
-                <input type="text" id="sign-up-username" name="username" required>
+<body class="min-h-screen bg-gray-100 dark:bg-bg-dark flex items-center justify-center font-sans">
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 dark:text-text-dark text-center">Register</h2>
+        <form id="sign-up-form" class="space-y-4">
+            <div class="flex flex-col">
+                <label for="sign-up-username" class="text-gray-600 mb-1 dark:text-text-dark">Username</label>
+                <input 
+                    type="text" 
+                    id="sign-up-username" 
+                    name="username" 
+                    required 
+                    class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
             </div>
-            <div>
-                <label for="sign-up-email">Email</label>
-                <input type="email" id="sign-up-email" name="email" required>
+            <div class="flex flex-col">
+                <label for="sign-up-email" class="text-gray-600 mb-1 dark:text-text-dark">Email</label>
+                <input 
+                    type="email" 
+                    id="sign-up-email" 
+                    name="email" 
+                    required 
+                    class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
             </div>
-            <div>
-                <label for="sign-up-password">Password</label>
-                <input type="password" id="sign-up-password" name="password" required minlength="8">
+            <div class="flex flex-col">
+                <label for="sign-up-password" class="text-gray-600 mb-1 dark:text-text-dark">Password</label>
+                <input 
+                    type="password" 
+                    id="sign-up-password" 
+                    name="password" 
+                    required 
+                    minlength="8" 
+                    class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
             </div>
-            <div>
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" name="confirm-password" required minlength="8">
-                <div id="password-strength"></div>
+            <div class="flex flex-col">
+                <label for="confirm-password" class="text-gray-600 mb-1 dark:text-text-dark">Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="confirm-password" 
+                    name="confirm-password" 
+                    required 
+                    minlength="8" 
+                    class="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <div id="password-strength" class="text-sm text-gray-500 mt-1"></div>
             </div>
-            <button type="submit">Sign Up</button>
-            <p id="register-error"></p>
+            <button 
+                type="submit" 
+                class="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+                Sign Up
+            </button>
+            <p id="register-error" class="text-sm text-red-500 mt-4 text-center"></p>
         </form>
-        <p>
-            Already have an account? <a href="../login/">Log in</a>
+        <p class="text-sm text-gray-500 mt-4 text-center dark:text-text-dark">
+            Already have an account? <a href="../login/" class="text-blue-500 hover:underline">Log in</a>
         </p>
     </div>
-    
-  
 </body>
+
 </html>
