@@ -1,3 +1,4 @@
+import { deletePost } from "../../api/post/delete.js";
 export function renderUserPosts(posts, containerId = "postContainer") {
   const container = document.getElementById(containerId);
 
@@ -29,8 +30,25 @@ export function renderUserPosts(posts, containerId = "postContainer") {
         ${post.image ? `<img src="${post.image}" alt="Post Image" class="post-image">` : ""}
       </div>
       </a>
-      `;
+    `;
 
     container.appendChild(postElement);
+
+    const deleteButton = postElement.querySelector(".delete-post-btn");
+    deleteButton.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const postId = deleteButton.dataset.postId;
+
+      if (confirm("Are you sure you want to delete this post?")) {
+        try {
+          await deletePost(postId);
+          postElement.remove();
+          alert("Post deleted successfully!");
+        } catch (error) {
+          console.error("Failed to delete post:", error);
+          alert("Failed to delete post. Please try again.");
+        }
+      }
+    });
   });
 }

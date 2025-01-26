@@ -226,21 +226,35 @@ app.put('/users/:uid', async (req, res) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
-  
-  
-  app.get('/posts/:postId/comments', async (req, res) => {
+
+  app.delete('/posts/:postId', async (req, res) => {
     try {
       const { postId } = req.params;
+      const idToken = req.headers.authorization?.split(' ')[1];
   
-      const snapshot = await db.collection('posts').doc(postId).collection('comments').get();
-      const comments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      res.status(200).send(comments);
+      if (!idToken) {
+        return res.status(401).send({ message: 'Authorization token is required' });
+      }
+  
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+  
+      const postDoc = await db.collection('posts').doc(postId).get();
+      if (!postDoc.exists) {
+        return res.status(404).send({ message: 'Post not found' });
+      }
+  
+      const postData = postDoc.data();
+      if (postData.userId !== decodedToken.uid) {
+        return res.status(403).send({ message: 'You are not authorized to delete this post' });
+      }
+  
+      await db.collection('posts').doc(postId).delete();
+      res.status(200).send({ message: 'Post deleted successfully' });
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error('Error deleting post:', error);
       res.status(500).send({ message: 'Internal server error' });
     }
   });
-  
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
