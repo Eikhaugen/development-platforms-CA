@@ -8,7 +8,7 @@ export default defineConfig({
       input: {
         welcome: './index.html',
         feed: './feed/index.html',
-        myProfile: './myProfile/index.html',
+        myProfile: './MyProfile/index.html',
         post: './post/index.html',
         authLogin: './auth/login/index.html',
         authRegister: './auth/register/index.html',
