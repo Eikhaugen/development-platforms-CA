@@ -13,7 +13,7 @@ export function renderUserProfile(profile) {
     <!-- Profile Section -->
     <div class="relative mt-6">
       <!-- Avatar -->
-      <img src="${profile.avatar || '/default-avatar.png'}" alt="Profile Avatar"
+      <img src="${profile.avatar || '/default-avatar.svg'}" alt="Profile Avatar"
         class="w-24 h-24 rounded-full bg-gray-300 dark:bg-gray-700 border-4 border-white dark:border-gray-800 absolute -top-12 left-4">
       
       <div class="ml-32">
