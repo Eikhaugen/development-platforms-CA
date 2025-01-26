@@ -1,47 +1,115 @@
-# development-platforms-CA
+# Development Platforms Course Assignment - Social Media Platform
 
-# API Endpoints
+This repository contains the course assignment for the Development Platforms course.
 
-## User Endpoints
-- **GET /users/:uid**  
-  Fetches user profile data by UID.  
-  **Authentication**: Not required  
+## Table of Contents:
+- [Description](#description)
+  - [Features](#features)
+  - [Built With](#built-with)
+- [Endpoints](#endpoints)
+- [Installing](#installing)
+  - [Running](#running)
+- [Contact](#contact)
 
-- **PUT /users/:uid**  
-  Updates the profile of a user (bio, avatar, or banner).  
-  **Authentication**: Required (only the profile owner can update)
+## Description
 
-## Post Endpoints
-- **POST /posts**  
-  Creates a new post.  
-  **Authentication**: Required  
+This project is a social media application built as part of the Development Platforms course assignment. The application consists of a backend API with Firestore as the database and a client-side frontend for interacting with the API. It supports user authentication, post management, and commenting functionality.
 
-- **GET /posts**  
-  Fetches all posts or posts for a specific user (`?userId=`).  
-  **Authentication**: Not required  
+### Features:
+- **User Authentication**:
+  - Register new users with Firebase Authentication.
+  - Login for existing users.
+- **Post Management**:
+  - Create new posts, including image uploads to Firebase Storage.
+  - Delete posts (only the creator can delete them).
+  - View a single post by ID, including comments.
+- **Comment Management**:
+  - Comment on a post.
+  - View all comments for a specific post.
+- **Profile Management**:
+  - Update user bio, avatar, and banner image.
+  - View the user's profile, including their posts.
 
-- **GET /posts/:postId**  
-  Fetches a single post by its ID.  
-  **Authentication**: Not required  
+### Built With:
+- **Frontend**:
+  - HTML
+  - JavaScript
+  - Vite
+  - TailwindCSS
+- **Backend**:
+  - Node.js with Express
+  - Firebase (Authentication, Firestore, Storage)
 
-- **DELETE /posts/:postId**  
-  Deletes a specific post by its ID.  
-  **Authentication**: Required (only the post owner can delete)
+---
 
-## Comment Endpoints
-- **POST /posts/:postId/comments**  
-  Adds a comment to a specific post.  
-  **Authentication**: Required  
+## Endpoints
 
-- **GET /posts/:postId/comments**  
-  Fetches comments for a specific post.  
-  **Authentication**: Not required  
+### **User Endpoints**
+| Method | Endpoint            | Description                         | Authenticated |
+|--------|---------------------|-------------------------------------|---------------|
+| POST   | `/users`            | Register a new user                | No            |
+| GET    | `/users`            | Get all users                      | No            |
+| GET    | `/users/:uid`       | Get a specific user's profile       | No            |
+| PUT    | `/users/:uid`       | Update a user's profile            | Yes           |
 
-## Storage Rules
-- **Avatars and Banners (Firebase Storage)**  
-  **Read**: Allowed for all users  
-  **Write**: Only authenticated users  
+### **Post Endpoints**
+| Method | Endpoint            | Description                         | Authenticated |
+|--------|---------------------|-------------------------------------|---------------|
+| POST   | `/posts`            | Create a new post                  | Yes           |
+| GET    | `/posts`            | Get all posts                      | No            |
+| GET    | `/posts/:postId`    | Get a specific post by ID          | No            |
+| GET    | `/posts?userId=`    | Get posts by a specific user ID     | No            |
+| DELETE | `/posts/:postId`    | Delete a post                      | Yes           |
 
-- **Posts (Firebase Storage)**  
-  **Read**: Allowed for all users  
-  **Write**: Only authenticated users  
+### **Comment Endpoints**
+| Method | Endpoint                     | Description                         | Authenticated |
+|--------|------------------------------|-------------------------------------|---------------|
+| POST   | `/posts/:postId/comments`    | Add a comment to a specific post    | Yes           |
+| GET    | `/posts/:postId/comments`    | Get all comments for a specific post | No            |
+
+---
+
+## Installing
+
+This project is divided into two main folders:
+- **Backend**: Contains the Express server and Firebase configuration.
+- **Frontend**: Contains the Vite-based client-side application.
+
+### Backend Installation
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
+
+2. Install the necessary dependencies:
+    ```bash
+    npm install
+    ```
+3. Start the Express server:
+    ```bash
+    node index.js
+    ```
+
+4. The server will run on http://localhost:5000 by default (or another port defined in your environment variables).
+
+### Frontend Installation
+1. Navigate to the frontend directory
+    ```bash
+    cd frontend
+    ```
+2. Install the necessary dependencies:
+    ```bash
+    npm install
+    ```
+3. Start the Vite development server:
+    ```bash
+    npm run dev
+    ```
+4. The application will be available at http://localhost:3000 by default.
+
+### Note:
+- Ensure that both the backend and frontend servers are running for the application to function properly.
+- The backend API is deployed on Render, and the frontend is deployed on Netlify for production environments.
+- The .env files should be configured in both the backend and frontend folders for environment-specific settings.
+- You will need to sign up on firebase, set up a database and add your serviceAccountKey.json to the backend root folder.
+- You have to set up firebaseConfig in .env in frontend root folder, to use firebase auth, firestore and firebase storage.
