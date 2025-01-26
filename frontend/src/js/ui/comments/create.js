@@ -1,4 +1,4 @@
-import { BASE_API_URL } from "../constants.js";
+import { BASE_API_URL } from "../../api/constants.js";
 import { auth } from "../../utils/firebaseConfig.js";
 
 export async function createComment(postId, commentData) {
