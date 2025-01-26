@@ -23,7 +23,7 @@ export default async function router(pathname = window.location.pathname) {
       }
       break;
     }
-    case pathname === "/MyProfile/":
+    case pathname === "/myprofile/":
       await import("./views/myProfile.js").then((module) => module.default());
       break;
     case pathname === "/profileEdit/":
