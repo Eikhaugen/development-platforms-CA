@@ -1,10 +1,19 @@
 import { BASE_API_URL } from "../constants.js";
-import { storage } from "../../utils/firebaseConfig.js";
+import { storage, auth } from "../../utils/firebaseConfig.js";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export async function createPost({ userId, content, imageFile }) {
-  let imageUrl = null;
+export async function createPost({ content, imageFile }) {
+  // Ensure the user is logged in
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("User not logged in");
+  }
 
+  // Get the token for authenticated requests
+  const token = await user.getIdToken();
+
+  // Upload image to Firebase Storage if provided
+  let imageUrl = null;
   if (imageFile) {
     const imageRef = ref(storage, `posts/${Date.now()}-${imageFile.name}`);
     const uploadResult = await uploadBytes(imageRef, imageFile);
@@ -15,9 +24,10 @@ export async function createPost({ userId, content, imageFile }) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
     },
     body: JSON.stringify({
-      userId,
+      userId: user.uid,
       content,
       image: imageUrl,
       createdAt: new Date().toISOString(),
@@ -31,4 +41,3 @@ export async function createPost({ userId, content, imageFile }) {
 
   return await response.json();
 }
-

@@ -24,6 +24,24 @@ app.use(cors({
 
 app.use(bodyParser.json()); 
 
+const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).send({ error: 'Unauthorized: No token provided' });
+  }
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = decodedToken; 
+    next();
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(401).send({ error: 'Unauthorized: Invalid token' });
+  }
+};
+
+
 // Routes
 app.get('/', (req, res) => {
   res.send('API is working!');
@@ -90,18 +108,11 @@ app.get('/users/:uid', async (req, res) => {
 });
 
 
-app.put('/users/:uid', async (req, res) => {
+app.put('/users/:uid', verifyToken, async (req, res) => {
   try {
     const { uid } = req.params;
-    const idToken = req.headers.authorization?.split(' ')[1];
 
-    if (!idToken) {
-      return res.status(401).send({ message: 'Authorization token is required' });
-    }
-
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-
-    if (decodedToken.uid !== uid) {
+    if (req.user.uid !== uid) {
       return res.status(403).send({ message: 'You are not authorized to update this profile' });
     }
 
@@ -124,30 +135,29 @@ app.put('/users/:uid', async (req, res) => {
   }
 });
 
-  
+app.post('/posts', verifyToken, async (req, res) => {
+  try {
+    const { content, image } = req.body;
+    const userId = req.user.uid;
 
-  app.post('/posts', async (req, res) => {
-    try {
-      const { userId, content, image } = req.body;
-  
-      if (!userId || !content) {
-        return res.status(400).send({ message: 'userId and content are required' });
-      }
-  
-      const post = {
-        userId,
-        content,
-        image: image || null,
-        createdAt: new Date().toISOString(),
-      };
-  
-      const postRef = await db.collection('posts').add(post);
-      res.status(201).send({ message: 'Post created successfully', postId: postRef.id });
-    } catch (error) {
-      console.error('Error creating post:', error);
-      res.status(500).send({ message: 'Internal server error' });
+    if (!content) {
+      return res.status(400).send({ message: 'Content is required' });
     }
-  });
+
+    const post = {
+      userId,
+      content,
+      image: image || null,
+      createdAt: new Date().toISOString(),
+    };
+
+    await db.collection('posts').add(post);
+    res.status(201).send({ message: 'Post created successfully' });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+});
   
   app.get('/posts', async (req, res) => {
     try {
@@ -208,13 +218,15 @@ app.put('/users/:uid', async (req, res) => {
     }
   });
 
-  app.post('/posts/:postId/comments', async (req, res) => {
+
+  app.post('/posts/:postId/comments', verifyToken, async (req, res) => {
     try {
       const { postId } = req.params;
-      const { userId, content } = req.body;
+      const { content } = req.body;
+      const userId = req.user.uid;
   
-      if (!userId || !content) {
-        return res.status(400).send({ message: 'userId and content are required' });
+      if (!content) {
+        return res.status(400).send({ message: 'Content is required' });
       }
   
       const comment = {
@@ -258,16 +270,9 @@ app.put('/users/:uid', async (req, res) => {
     }
   });
 
-  app.delete('/posts/:postId', async (req, res) => {
+  app.delete('/posts/:postId', verifyToken, async (req, res) => {
     try {
       const { postId } = req.params;
-      const idToken = req.headers.authorization?.split(' ')[1];
-  
-      if (!idToken) {
-        return res.status(401).send({ message: 'Authorization token is required' });
-      }
-  
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
   
       const postDoc = await db.collection('posts').doc(postId).get();
       if (!postDoc.exists) {
@@ -275,7 +280,7 @@ app.put('/users/:uid', async (req, res) => {
       }
   
       const postData = postDoc.data();
-      if (postData.userId !== decodedToken.uid) {
+      if (postData.userId !== req.user.uid) {
         return res.status(403).send({ message: 'You are not authorized to delete this post' });
       }
   
