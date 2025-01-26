@@ -1,34 +1,28 @@
-import { createComment } from "../../api/comments/create.js";
+import { BASE_API_URL } from "../constants.js";
 import { auth } from "../../utils/firebaseConfig.js";
 
-export async function handleCommentForm(event) {
-  event.preventDefault();
-
-  const commentContent = event.target.comment.value.trim();
-  const postId = event.target.dataset.postId;
+export async function createComment(postId, commentData) {
   const user = auth.currentUser;
 
   if (!user) {
-    alert("You must be logged in to comment!");
-    return;
+    throw new Error("User not logged in");
   }
 
-  if (!commentContent) {
-    alert("Comment content is required!");
-    return;
+  const token = await user.getIdToken();
+
+  const response = await fetch(`${BASE_API_URL}/posts/${postId}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, 
+    },
+    body: JSON.stringify(commentData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to post comment");
   }
 
-  try {
-    await createComment(postId, {
-      userId: user.uid,
-      content: commentContent,
-    });
-
-    alert("Comment posted successfully!");
-    event.target.reset(); 
-    window.location.reload(); 
-  } catch (error) {
-    console.error("Error posting comment:", error);
-    alert("Failed to post comment. Please try again.");
-  }
+  return await response.json();
 }
