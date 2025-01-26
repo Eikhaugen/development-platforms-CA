@@ -151,10 +151,15 @@ app.put('/users/:uid', async (req, res) => {
   
   app.get('/posts', async (req, res) => {
     try {
-      const postsSnapshot = await db.collection('posts')
-        .orderBy('createdAt', 'desc')
-        .get();
+      const { userId } = req.query;
   
+      let query = db.collection('posts').orderBy('createdAt', 'desc');
+  
+      if (userId) {
+        query = query.where('userId', '==', userId);
+      }
+  
+      const postsSnapshot = await query.get();
       const posts = [];
   
       for (const doc of postsSnapshot.docs) {
@@ -175,6 +180,7 @@ app.put('/users/:uid', async (req, res) => {
       res.status(500).send({ message: 'Internal server error' });
     }
   });
+  
 
   app.get('/posts/:postId', async (req, res) => {
     const { postId } = req.params;

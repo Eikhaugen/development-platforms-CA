@@ -7,11 +7,9 @@ import { renderUserPosts } from "../../ui/post/renderUserPosts.js";
 
 export default async function myProfileView() {
   try {
-    // Fetch and render user profile
     const profile = await fetchUserProfile();
     renderUserProfile(profile);
 
-    // Attach event listener for edit profile button
     const editProfileBtn = document.getElementById("editProfileBtn");
     if (editProfileBtn) {
       editProfileBtn.addEventListener("click", () => toggleVisibility("#editProfileContainer"));
@@ -19,7 +17,6 @@ export default async function myProfileView() {
       console.error("Edit Profile button not found!");
     }
 
-    // Fetch and render user posts
     const posts = await fetchUserPosts();
     renderUserPosts(posts);
   } catch (error) {
@@ -30,7 +27,6 @@ export default async function myProfileView() {
     }
   }
 
-  // Attach event listener for edit profile form
   const editProfileForm = document.querySelector("#editProfileForm");
   if (editProfileForm) {
     editProfileForm.addEventListener("submit", async (event) => {
