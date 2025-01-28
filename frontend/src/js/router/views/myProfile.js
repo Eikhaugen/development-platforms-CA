@@ -5,6 +5,7 @@ import { toggleVisibility } from "../../ui/global/toggle.js";
 import { fetchUserPosts } from "../../api/post/read.js";
 import { renderUserPosts } from "../../ui/post/renderUserPosts.js";
 import { handlePostForm } from "../../ui/post/create.js";
+import { handleLogout } from "../../ui/auth/logout.js";
 
 export default async function myProfileView() {
   try {
@@ -51,4 +52,16 @@ export default async function myProfileView() {
       postForm.reset();
     });
   }
+
+  const logoutBTN = document.querySelectorAll(".logoutBTN");
+  if (logoutBTN.length > 0) {
+    logoutBTN.forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.preventDefault();
+          handleLogout();
+        });
+    });
+} else {
+    console.error("Logout Button not found!");
+}
 }

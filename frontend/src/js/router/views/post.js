@@ -4,6 +4,7 @@ import { fetchCommentsByPostId } from "../../api/comments/read.js";
 import { renderComments } from "../../ui/comments/render.js";
 import { handleCommentForm } from "../../ui/comments/create.js";
 import { toggleVisibility } from "../../ui/global/toggle.js";
+import { handleLogout } from "../../ui/auth/logout.js";
 
 export default async function postView(postId) {
   try {
@@ -36,4 +37,16 @@ export default async function postView(postId) {
       toggleVisibility("#mobileNavList");
     });
   }
+
+  const logoutBTN = document.querySelectorAll(".logoutBTN");
+  if (logoutBTN.length > 0) {
+    logoutBTN.forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.preventDefault();
+          handleLogout();
+        });
+    });
+} else {
+    console.error("Logout Button not found!");
+}
 }

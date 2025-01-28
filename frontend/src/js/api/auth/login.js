@@ -6,11 +6,13 @@ export async function loginUser(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
     const token = await userCredential.user.getIdToken();
+    const uid = userCredential.user.uid;
 
     localStorage.setItem("token", token);
+    localStorage.setItem("uid", uid);
 
     return {
-      uid: userCredential.user.uid,
+      uid: uid,
       email: userCredential.user.email,
       displayName: userCredential.user.displayName,
     };

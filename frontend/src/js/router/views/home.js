@@ -2,6 +2,7 @@ import { fetchAllPosts } from "../../api/post/read.js";
 import { renderPosts } from "../../ui/post/render.js";
 import { handlePostForm } from "../../ui/post/create.js";
 import { toggleVisibility } from "../../ui/global/toggle.js";
+import { handleLogout } from "../../ui/auth/logout.js";
 
 export default async function homeView() {
   try {
@@ -28,4 +29,17 @@ export default async function homeView() {
         toggleVisibility("#mobileNavList");
       });
     }
+
+    const logoutBTN = document.querySelectorAll(".logoutBTN");
+    if (logoutBTN.length > 0) {
+      logoutBTN.forEach((btn) => {
+          btn.addEventListener("click", (event) => {
+            event.preventDefault();
+            handleLogout();
+          });
+      });
+  } else {
+      console.error("Logout Button not found!");
+  }
+  
 }
